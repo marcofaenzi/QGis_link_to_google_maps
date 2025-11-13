@@ -11,7 +11,7 @@ tags=google maps,street view,clipboard,url,map link,external tools,sharing
 changelog=Added Street View support and flexible main button action (v0.2)
 experimental=False
 deprecated=False
-license=GPL-2.0
+license=GPL-3.0
 
 [desktop]
 icon=icon.png
