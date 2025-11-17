@@ -4,7 +4,7 @@ qgisMinimumVersion=3.0
 description=Generate a Google Maps or Street View link from any spot on your QGIS map—copy or open the location instantly with one click, always using WGS84 coordinates.
 author=Marco Faenzi
 email=marco.faenzi@gmail.com
-version=0.2
+version=0.2.1
 icon=icon.png
 category=Web
 tags=google maps,street view,clipboard,url,map link,external tools,sharing
@@ -12,6 +12,17 @@ changelog=Added Street View support and flexible main button action (v0.2)
 experimental=False
 deprecated=False
 license=GPL-3.0
-
+about=Create shareable Google Maps and Street View links directly from QGIS.
+ It converts any clicked map point to WGS84 and builds the URL for you.
+ Key features:
+ - One click to copy the link or open it in your browser
+ - Choose Google Maps or Street View as the default action
+ - Automatic reprojection to WGS84 from any layer CRS
+ - Configurable zoom level for Maps and Street View
+ - Toolbar button remembers your last choice
+ Perfect for quickly sharing precise locations or opening field navigation.
+repository=https://github.com/marcofaenzi/QGis_link_to_google_maps
+tracker=https://github.com/marcofaenzi/QGis_link_to_google_maps/issues
+homepage=https://github.com/marcofaenzi/QGis_link_to_google_maps/blob/main/README.md
 [desktop]
 icon=icon.png

@@ -1,10 +1,9 @@
-from qgis.PyQt.QtCore import QObject, QCoreApplication, QSize
+from qgis.PyQt.QtCore import QObject, QCoreApplication, QSize, QTranslator, QLocale, QSettings
 from qgis.PyQt.QtWidgets import QAction, QApplication, QToolButton, QMenu
 from qgis.PyQt.QtGui import QIcon
 from qgis.utils import iface
 from qgis.gui import QgsMapTool
 from qgis.core import QgsProject, QgsCoordinateReferenceSystem, QgsCoordinateTransform
-from PyQt5.QtCore import QSize  
 import os
 from PyQt5.Qt import QDesktopServices, QUrl
 
@@ -15,7 +14,7 @@ ICON_BROWSER = os.path.join(PLUGIN_PATH, 'icon_browser.png')
 ICON_STREET = os.path.join(PLUGIN_PATH, 'icon_streetview.png')
 
 def tr(msg):
-    return QCoreApplication.translate('LinkGoogleMapsPlugin', msg)
+    return QCoreApplication.translate('@default', msg)
 
 class SingleClickMapTool(QgsMapTool):
     def __init__(self, canvas, callback):
@@ -37,15 +36,40 @@ class LinkGoogleMapsPlugin(QObject):
         self.action_street = None
         self.map_tool = None
         self.current_action = 'copy'  # 'copy', 'browser', 'streetview'
+        self.translator = None
+        self._load_translator()
+
+    def _load_translator(self):
+        # Rispetta la lingua di QGIS (non quella di sistema): usa overrideFlag e userLocale.
+        # Default: inglese (nessun translator).
+        lang = 'en'
+        try:
+            settings = QSettings()
+            override_flag = settings.value('locale/overrideFlag', False, type=bool)
+            if override_flag:
+                user_locale = settings.value('locale/userLocale', '', type=str) or ''
+                if user_locale:
+                    lang = user_locale[0:2].lower()
+            else:
+                lang = QLocale().name()[0:2].lower()
+        except Exception:
+            lang = 'en'
+
+        if lang != 'en':
+            qm_path = os.path.join(PLUGIN_PATH, 'i18n', f'LinkToGoogleMaps_{lang}.qm')
+            if os.path.exists(qm_path):
+                self.translator = QTranslator()
+                if self.translator.load(qm_path):
+                    QCoreApplication.installTranslator(self.translator)
 
     def initGui(self):
         self.btn = QToolButton()
         self.btn.setToolButtonStyle(2)
         self.menu = QMenu()
         self.menu.setBaseSize(QSize(48, 48))
-        self.action_copy = self.menu.addAction(QIcon(ICON_CLIP), tr('Copia link Google Maps'))
-        self.action_browser = self.menu.addAction(QIcon(ICON_BROWSER), tr('Apri su Google Maps nel browser'))
-        self.action_street = self.menu.addAction(QIcon(ICON_STREET), tr('Apri Street View nel browser'))
+        self.action_copy = self.menu.addAction(QIcon(ICON_CLIP), tr('Copy Google Maps link'))
+        self.action_browser = self.menu.addAction(QIcon(ICON_BROWSER), tr('Open on Google Maps in browser'))
+        self.action_street = self.menu.addAction(QIcon(ICON_STREET), tr('Open Street View in browser'))
         self.btn.setIcon(QIcon(ICON_CLIP))
         self.btn.setMenu(self.menu)
         self.btn.setPopupMode(QToolButton.MenuButtonPopup)
@@ -53,7 +77,7 @@ class LinkGoogleMapsPlugin(QObject):
         self.action_copy.triggered.connect(lambda: self.set_main_action('copy'))
         self.action_browser.triggered.connect(lambda: self.set_main_action('browser'))
         self.action_street.triggered.connect(lambda: self.set_main_action('streetview'))
-        self.btn.setToolTip(tr('Copia link Google Maps'))
+        self.btn.setToolTip(tr('Copy Google Maps link'))
         iface.addToolBarWidget(self.btn)
 
     def unload(self):
@@ -68,13 +92,13 @@ class LinkGoogleMapsPlugin(QObject):
         self.current_action = mode
         if mode == 'copy':
             self.btn.setIcon(QIcon(ICON_CLIP))
-            self.btn.setToolTip(tr('Copia link Google Maps'))
+            self.btn.setToolTip(tr('Copy Google Maps link'))
         elif mode == 'browser':
             self.btn.setIcon(QIcon(ICON_BROWSER))
-            self.btn.setToolTip(tr('Apri su Google Maps nel browser'))
+            self.btn.setToolTip(tr('Open on Google Maps in browser'))
         elif mode == 'streetview':
             self.btn.setIcon(QIcon(ICON_STREET))
-            self.btn.setToolTip(tr('Apri Street View nel browser'))
+            self.btn.setToolTip(tr('Open Street View in browser'))
         self.trigger_current_action()
 
     def trigger_current_action(self):
@@ -91,12 +115,12 @@ class LinkGoogleMapsPlugin(QObject):
         if self.current_action == 'copy':
             gmaps_link = f'https://maps.google.com/?q={lat},{lng}'
             QApplication.clipboard().setText(gmaps_link)
-            iface.messageBar().pushSuccess('Link Google Maps copiato!', gmaps_link)
+            iface.messageBar().pushSuccess(tr('Google Maps link copied!'), gmaps_link)
         elif self.current_action == 'browser':
             gmaps_link = f'https://maps.google.com/?q={lat},{lng}'
             QDesktopServices.openUrl(QUrl(gmaps_link))
-            iface.messageBar().pushSuccess('Google Maps aperto nel browser', gmaps_link)
+            iface.messageBar().pushSuccess(tr('Opened Google Maps in browser'), gmaps_link)
         elif self.current_action == 'streetview':
             street_link = f'https://www.google.com/maps/@?api=1&map_action=pano&viewpoint={lat},{lng}'
             QDesktopServices.openUrl(QUrl(street_link))
-            iface.messageBar().pushSuccess('Street View aperto nel browser', street_link)
+            iface.messageBar().pushSuccess(tr('Opened Street View in browser'), street_link)
