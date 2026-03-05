@@ -7,7 +7,7 @@ from qgis.core import QgsProject, QgsCoordinateReferenceSystem, QgsCoordinateTra
 import os
 from PyQt5.Qt import QDesktopServices, QUrl
 import json
-from urllib.parse import urlencode
+from urllib.parse import urlencode, urlparse
 from urllib.request import Request, urlopen
 
 PLUGIN_PATH = os.path.dirname(os.path.abspath(__file__))
@@ -300,8 +300,11 @@ class LinkGoogleMapsPlugin(QObject):
             'limit': 1,
         }
         url = 'https://nominatim.openstreetmap.org/search?' + urlencode(params)
+        parsed = urlparse(url)
+        if parsed.scheme not in ('https',):
+            raise ValueError('Only HTTPS URLs are allowed')
         req = Request(url, headers={
-            'User-Agent': f'LinkToGoogleMaps QGIS Plugin/0.2.3 ({QApplication.instance().applicationName()})'
+            'User-Agent': f'LinkToGoogleMaps QGIS Plugin/0.2.4 ({QApplication.instance().applicationName()})'
         })
         with urlopen(req, timeout=10) as resp:
             payload = resp.read()
