@@ -304,7 +304,7 @@ class LinkGoogleMapsPlugin(QObject):
         if parsed.scheme not in ('https',):
             raise ValueError('Only HTTPS URLs are allowed')
         req = Request(url, headers={
-            'User-Agent': f'LinkToGoogleMaps QGIS Plugin/0.2.4 ({QApplication.instance().applicationName()})'
+            'User-Agent': f'LinkToGoogleMaps QGIS Plugin/0.2.5 ({QApplication.instance().applicationName()})'
         })
         with urlopen(req, timeout=10) as resp:
             payload = resp.read()
