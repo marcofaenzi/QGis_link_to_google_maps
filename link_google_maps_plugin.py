@@ -82,6 +82,9 @@ class LinkGoogleMapsPlugin(QObject):
         self.action_copy = self.menu.addAction(QIcon(ICON_CLIP), tr('Copy Google Maps link'))
         self.action_browser = self.menu.addAction(QIcon(ICON_BROWSER), tr('Open on Google Maps in browser'))
         self.action_street = self.menu.addAction(QIcon(ICON_STREET), tr('Open Street View in browser'))
+        self.menu.addSeparator()
+        self.search_action = self.menu.addAction(QIcon(ICON_SEARCH), tr('Search address'))
+        self.search_action.triggered.connect(self._open_search_dialog)
         self.btn.setIcon(QIcon(ICON_CLIP))
         self.btn.setMenu(self.menu)
         self.btn.setPopupMode(QToolButton.MenuButtonPopup)
@@ -92,20 +95,12 @@ class LinkGoogleMapsPlugin(QObject):
         self.btn.setToolTip(tr('Copy Google Maps link'))
         iface.addToolBarWidget(self.btn)
 
-        # Address search action (opens dialog) - icon only, tooltip provides text
-        self.search_action = QAction(QIcon(ICON_SEARCH), '')
-        self.search_action.setToolTip(tr('Search address'))
-        iface.addToolBarIcon(self.search_action)
-        self.search_action.triggered.connect(self._open_search_dialog)
-
     def unload(self):
         if self.btn is not None:
             self.btn.setParent(None)
             self.btn.deleteLater()
             self.btn = None
-        if self.search_action is not None:
-            iface.removeToolBarIcon(self.search_action)
-            self.search_action = None
+        self.search_action = None
         if self.search_marker is not None:
             try:
                 self.search_marker.setVisible(False)

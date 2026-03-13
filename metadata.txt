@@ -20,6 +20,7 @@ about=Create shareable Google Maps and Street View links directly from QGIS.
  - Automatic reprojection to WGS84 from any layer CRS
  - Configurable zoom level for Maps and Street View
  - Toolbar button remembers your last choice
+ - Address search: from the dropdown menu, search by address (Nominatim) to center the map on a place
  Perfect for quickly sharing precise locations or opening field navigation.
  Translations: English (default) and Italian (it).
 repository=https://github.com/marcofaenzi/QGis_link_to_google_maps

@@ -11,6 +11,7 @@
 - Open the nearest Street View point for the clicked location.
 - Automatically convert coordinates to WGS84 (EPSG:4326) from any CRS.
 - User-friendly toolbar button with a drop-down menu to choose the default action.
+- **Address search:** from the dropdown menu, search by address (Nominatim) to center the map on a place.
 - Clear and dynamic icons and tooltips.
 
 ## Installation
