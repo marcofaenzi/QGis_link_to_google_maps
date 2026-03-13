@@ -13,6 +13,7 @@
 - User-friendly toolbar button with a drop-down menu to choose the default action.
 - **Address search:** from the dropdown menu, search by address (Nominatim) to center the map on a place.
 - Clear and dynamic icons and tooltips.
+- **Qt6 / QGIS 4 compatible:** works on QGIS 3.x (Qt5) and QGIS 4.x (Qt6).
 
 ## Installation
 

@@ -1,11 +1,14 @@
-from qgis.PyQt.QtCore import QObject, QCoreApplication, QSize, QTranslator, QLocale, QSettings
+from qgis.PyQt.QtCore import QObject, QCoreApplication, QSize, QTranslator, QLocale, QSettings, QUrl, Qt
 from qgis.PyQt.QtWidgets import QAction, QApplication, QToolButton, QMenu, QWidget, QHBoxLayout, QLineEdit, QPushButton, QDialog, QVBoxLayout, QLabel, QDialogButtonBox, QComboBox
 from qgis.PyQt.QtGui import QIcon, QColor
 from qgis.utils import iface
 from qgis.gui import QgsMapTool, QgsVertexMarker
 from qgis.core import QgsProject, QgsCoordinateReferenceSystem, QgsCoordinateTransform
 import os
-from PyQt5.Qt import QDesktopServices, QUrl
+try:
+    from qgis.PyQt.QtGui import QDesktopServices  # PyQt6 / QGIS 4
+except ImportError:
+    from qgis.PyQt.QtCore import QDesktopServices  # PyQt5 / QGIS 3
 import json
 from urllib.parse import urlencode, urlparse
 from urllib.request import Request, urlopen
@@ -76,7 +79,12 @@ class LinkGoogleMapsPlugin(QObject):
 
     def initGui(self):
         self.btn = QToolButton()
-        self.btn.setToolButtonStyle(2)
+        # Qt6 uses enum Qt.ToolButtonStyle; Qt5 used int. Value 2 = TextBesideIcon
+        try:
+            style = Qt.ToolButtonStyle.ToolButtonTextBesideIcon  # PyQt6 / QGIS 4
+        except AttributeError:
+            style = Qt.ToolButtonTextBesideIcon  # PyQt5 / QGIS 3
+        self.btn.setToolButtonStyle(style)
         self.menu = QMenu()
         self.menu.setBaseSize(QSize(48, 48))
         self.action_copy = self.menu.addAction(QIcon(ICON_CLIP), tr('Copy Google Maps link'))
@@ -87,7 +95,12 @@ class LinkGoogleMapsPlugin(QObject):
         self.search_action.triggered.connect(self._open_search_dialog)
         self.btn.setIcon(QIcon(ICON_CLIP))
         self.btn.setMenu(self.menu)
-        self.btn.setPopupMode(QToolButton.MenuButtonPopup)
+        # Qt6: enum under QToolButton.ToolButtonPopupMode; Qt5: QToolButton.MenuButtonPopup
+        try:
+            popup_mode = QToolButton.ToolButtonPopupMode.MenuButtonPopup  # PyQt6 / QGIS 4
+        except AttributeError:
+            popup_mode = QToolButton.MenuButtonPopup  # PyQt5 / QGIS 3
+        self.btn.setPopupMode(popup_mode)
         self.btn.clicked.connect(self.trigger_current_action)
         self.action_copy.triggered.connect(lambda: self.set_main_action('copy'))
         self.action_browser.triggered.connect(lambda: self.set_main_action('browser'))
@@ -160,7 +173,11 @@ class LinkGoogleMapsPlugin(QObject):
         # Editable combo as address box with history dropdown
         combo = QComboBox()
         combo.setEditable(True)
-        combo.setInsertPolicy(QComboBox.NoInsert)
+        try:
+            insert_policy = QComboBox.InsertPolicy.NoInsert  # PyQt6 / QGIS 4
+        except AttributeError:
+            insert_policy = QComboBox.NoInsert  # PyQt5 / QGIS 3
+        combo.setInsertPolicy(insert_policy)
         # Placeholder on the embedded line edit
         if combo.lineEdit() is not None:
             combo.lineEdit().setPlaceholderText(tr('Search address...'))
@@ -196,13 +213,24 @@ class LinkGoogleMapsPlugin(QObject):
         layout.addWidget(combo)
         layout.addWidget(zoom_label)
         layout.addWidget(zoom_combo)
-        buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        try:
+            buttons = QDialogButtonBox(
+                QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
+            )  # PyQt6 / QGIS 4
+        except AttributeError:
+            buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)  # PyQt5 / QGIS 3
         layout.addWidget(buttons)
         buttons.accepted.connect(dlg.accept)
         buttons.rejected.connect(dlg.reject)
         if combo.lineEdit() is not None:
             combo.lineEdit().returnPressed.connect(dlg.accept)
-        if dlg.exec_() == QDialog.Accepted:
+        # PyQt6 uses exec(), PyQt5 uses exec_(); Qt6: QDialog.DialogCode.Accepted
+        run_dialog = getattr(dlg, 'exec', None) or getattr(dlg, 'exec_')
+        try:
+            accepted_code = QDialog.DialogCode.Accepted  # PyQt6 / QGIS 4
+        except AttributeError:
+            accepted_code = QDialog.Accepted  # PyQt5 / QGIS 3
+        if run_dialog() == accepted_code:
             current_text = combo.currentText() if combo.currentText() is not None else ''
             query = (current_text or '').strip()
             scale = zoom_combo.currentData() or 1000
@@ -299,7 +327,7 @@ class LinkGoogleMapsPlugin(QObject):
         if parsed.scheme not in ('https',):
             raise ValueError('Only HTTPS URLs are allowed')
         req = Request(url, headers={
-            'User-Agent': f'LinkToGoogleMaps QGIS Plugin/0.2.5 ({QApplication.instance().applicationName()})'
+            'User-Agent': f'LinkToGoogleMaps QGIS Plugin/1.0.1 ({QApplication.instance().applicationName()})'
         })
         with urlopen(req, timeout=10) as resp:
             payload = resp.read()

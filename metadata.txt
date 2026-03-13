@@ -1,14 +1,15 @@
 [general]
 name=LinkToGoogleMaps
 qgisMinimumVersion=3.0
+qgisMaximumVersion=4.99
 description=Generate a Google Maps or Street View link from any spot on your QGIS map—copy or open the location instantly with one click, always using WGS84 coordinates.
 author=Marco Faenzi
 email=marco.faenzi@gmail.com
-version=0.2.5
+version=1.0.1
 icon=icon.png
 category=Web
 tags=google maps,street view,clipboard,url,map link,external tools,sharing
-changelog=Release 0.2.5. Security: audit URL scheme for Nominatim requests (v0.2.4). Add address search to center map; improve i18n and language selection (v0.2.3)
+changelog=Qt6 / QGIS 4 compatible (v1.0.1). Release 0.2.5. Security: audit URL scheme for Nominatim requests (v0.2.4).
 experimental=False
 deprecated=False
 license=GPL-3.0

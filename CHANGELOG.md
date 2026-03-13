@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1] - 2025-03-05
+### Added
+- Qt6 / QGIS 4 compatibility: use `qgis.PyQt` shim for `QDesktopServices` and `QUrl` (no direct PyQt5 import).
+- `qgisMaximumVersion=4.99` in metadata for QGIS 4 Ready Plugins list.
+
+### Changed
+- Version 1.0.1 for QGIS 3.x and QGIS 4.x.
+
 ## [0.2.5] - 2025-03-05
 ### Changed
 - Version bump 0.2.5.
