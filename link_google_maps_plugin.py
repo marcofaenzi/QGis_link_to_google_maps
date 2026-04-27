@@ -1,5 +1,5 @@
 from qgis.PyQt.QtCore import QObject, QCoreApplication, QSize, QTranslator, QLocale, QSettings, QUrl, Qt
-from qgis.PyQt.QtWidgets import QAction, QApplication, QToolButton, QMenu, QWidget, QHBoxLayout, QLineEdit, QPushButton, QDialog, QVBoxLayout, QLabel, QDialogButtonBox, QComboBox
+from qgis.PyQt.QtWidgets import QAction, QApplication, QToolButton, QMenu, QDialog, QVBoxLayout, QLabel, QDialogButtonBox, QComboBox
 from qgis.PyQt.QtGui import QIcon, QColor
 from qgis.utils import iface
 from qgis.gui import QgsMapTool, QgsVertexMarker
@@ -324,12 +324,12 @@ class LinkGoogleMapsPlugin(QObject):
         }
         url = 'https://nominatim.openstreetmap.org/search?' + urlencode(params)
         parsed = urlparse(url)
-        if parsed.scheme not in ('https',):
-            raise ValueError('Only HTTPS URLs are allowed')
+        if parsed.scheme != 'https' or parsed.netloc != 'nominatim.openstreetmap.org':
+            raise ValueError('Only HTTPS Nominatim endpoint is allowed')
         req = Request(url, headers={
-            'User-Agent': f'LinkToGoogleMaps QGIS Plugin/1.0.1 ({QApplication.instance().applicationName()})'
+            'User-Agent': f'LinkToGoogleMaps QGIS Plugin/1.0.2 ({QApplication.instance().applicationName()})'
         })
-        with urlopen(req, timeout=10) as resp:
+        with urlopen(req, timeout=10) as resp:  # nosec B310 - validated https scheme and fixed trusted host above
             payload = resp.read()
         data = json.loads(payload.decode('utf-8'))
         if isinstance(data, list) and data:
