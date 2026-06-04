@@ -4,37 +4,37 @@
 <context>
     <name>@default</name>
     <message>
-        <location filename="../link_google_maps_plugin.py" line="110"/>
+        <location filename="../link_google_maps_plugin.py" line="131"/>
         <source>Copy Google Maps link</source>
         <translation>Copy Google Maps link</translation>
     </message>
     <message>
-        <location filename="../link_google_maps_plugin.py" line="113"/>
+        <location filename="../link_google_maps_plugin.py" line="134"/>
         <source>Open on Google Maps in browser</source>
         <translation>Open on Google Maps in browser</translation>
     </message>
     <message>
-        <location filename="../link_google_maps_plugin.py" line="116"/>
+        <location filename="../link_google_maps_plugin.py" line="137"/>
         <source>Open Street View in browser</source>
         <translation>Open Street View in browser</translation>
     </message>
     <message>
-        <location filename="../link_google_maps_plugin.py" line="133"/>
+        <location filename="../link_google_maps_plugin.py" line="154"/>
         <source>Google Maps link copied!</source>
         <translation>Google Maps link copied!</translation>
     </message>
     <message>
-        <location filename="../link_google_maps_plugin.py" line="137"/>
+        <location filename="../link_google_maps_plugin.py" line="158"/>
         <source>Opened Google Maps in browser</source>
         <translation>Opened Google Maps in browser</translation>
     </message>
     <message>
-        <location filename="../link_google_maps_plugin.py" line="141"/>
+        <location filename="../link_google_maps_plugin.py" line="162"/>
         <source>Opened Street View in browser</source>
         <translation>Opened Street View in browser</translation>
     </message>
     <message>
-        <location filename="../link_google_maps_plugin.py" line="149"/>
+        <location filename="../link_google_maps_plugin.py" line="183"/>
         <source>Search address...</source>
         <translation>Search address...</translation>
     </message>
@@ -44,52 +44,52 @@
         <translation type="obsolete">Search</translation>
     </message>
     <message>
-        <location filename="../link_google_maps_plugin.py" line="179"/>
+        <location filename="../link_google_maps_plugin.py" line="255"/>
         <source>Address not found</source>
         <translation>Address not found</translation>
     </message>
     <message>
-        <location filename="../link_google_maps_plugin.py" line="171"/>
+        <location filename="../link_google_maps_plugin.py" line="247"/>
         <source>Please enter an address</source>
         <translation>Please enter an address</translation>
     </message>
     <message>
-        <location filename="../link_google_maps_plugin.py" line="176"/>
+        <location filename="../link_google_maps_plugin.py" line="252"/>
         <source>Network error while searching</source>
         <translation>Network error while searching</translation>
     </message>
     <message>
-        <location filename="../link_google_maps_plugin.py" line="194"/>
+        <location filename="../link_google_maps_plugin.py" line="287"/>
         <source>Centered on result</source>
         <translation>Centered on result</translation>
     </message>
     <message>
-        <location filename="../link_google_maps_plugin.py" line="145"/>
+        <location filename="../link_google_maps_plugin.py" line="166"/>
         <source>Search address</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../link_google_maps_plugin.py" line="147"/>
+        <location filename="../link_google_maps_plugin.py" line="172"/>
         <source>Enter address to locate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../link_google_maps_plugin.py" line="150"/>
+        <location filename="../link_google_maps_plugin.py" line="194"/>
         <source>Zoom level</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../link_google_maps_plugin.py" line="152"/>
+        <location filename="../link_google_maps_plugin.py" line="196"/>
         <source>Regional (1:100,000)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../link_google_maps_plugin.py" line="153"/>
+        <location filename="../link_google_maps_plugin.py" line="197"/>
         <source>City (1:10,000)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../link_google_maps_plugin.py" line="154"/>
+        <location filename="../link_google_maps_plugin.py" line="198"/>
         <source>Street (1:1,000)</source>
         <translation type="unfinished"></translation>
     </message>

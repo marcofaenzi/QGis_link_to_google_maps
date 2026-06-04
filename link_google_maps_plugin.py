@@ -327,7 +327,7 @@ class LinkGoogleMapsPlugin(QObject):
         if parsed.scheme != 'https' or parsed.netloc != 'nominatim.openstreetmap.org':
             raise ValueError('Only HTTPS Nominatim endpoint is allowed')
         req = Request(url, headers={
-            'User-Agent': f'LinkToGoogleMaps QGIS Plugin/1.0.2 ({QApplication.instance().applicationName()})'
+            'User-Agent': f'LinkToGoogleMaps QGIS Plugin/1.0.3 ({QApplication.instance().applicationName()})'
         })
         with urlopen(req, timeout=10) as resp:  # nosec B310 - validated https scheme and fixed trusted host above
             payload = resp.read()
