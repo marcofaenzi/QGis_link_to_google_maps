@@ -34,6 +34,16 @@
         <translation>Opened Street View in browser</translation>
     </message>
     <message>
+        <location filename="../link_google_maps_plugin.py" line="98"/>
+        <source>Open Google Earth in browser</source>
+        <translation>Open Google Earth in browser</translation>
+    </message>
+    <message>
+        <location filename="../link_google_maps_plugin.py" line="171"/>
+        <source>Opened Google Earth in browser</source>
+        <translation>Opened Google Earth in browser</translation>
+    </message>
+    <message>
         <location filename="../link_google_maps_plugin.py" line="183"/>
         <source>Search address...</source>
         <translation>Search address...</translation>
