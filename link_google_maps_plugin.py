@@ -3,7 +3,7 @@ from qgis.PyQt.QtWidgets import QAction, QApplication, QToolButton, QMenu, QDial
 from qgis.PyQt.QtGui import QIcon, QColor
 from qgis.utils import iface
 from qgis.gui import QgsMapTool, QgsVertexMarker
-from qgis.core import QgsProject, QgsCoordinateReferenceSystem, QgsCoordinateTransform
+from qgis.core import QgsProject, QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsMessageLog, Qgis
 import os
 try:
     from qgis.PyQt.QtGui import QDesktopServices  # PyQt6 / QGIS 4
@@ -22,6 +22,14 @@ ICON_SEARCH = os.path.join(PLUGIN_PATH, 'map_search.png')
 
 def tr(msg):
     return QCoreApplication.translate('@default', msg)
+
+def _log_non_fatal(exc: Exception, context: str) -> None:
+    """Log non-critical failures (avoids bare except/pass for Bandit B110)."""
+    QgsMessageLog.logMessage(
+        f'LinkToGoogleMaps [{context}]: {exc}',
+        'LinkToGoogleMaps',
+        Qgis.Info,
+    )
 
 class SingleClickMapTool(QgsMapTool):
     def __init__(self, canvas, callback):
@@ -79,12 +87,7 @@ class LinkGoogleMapsPlugin(QObject):
 
     def initGui(self):
         self.btn = QToolButton()
-        # Qt6 uses enum Qt.ToolButtonStyle; Qt5 used int. Value 2 = TextBesideIcon
-        try:
-            style = Qt.ToolButtonStyle.ToolButtonTextBesideIcon  # PyQt6 / QGIS 4
-        except AttributeError:
-            style = Qt.ToolButtonTextBesideIcon  # PyQt5 / QGIS 3
-        self.btn.setToolButtonStyle(style)
+        self.btn.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
         self.menu = QMenu()
         self.menu.setBaseSize(QSize(48, 48))
         self.action_copy = self.menu.addAction(QIcon(ICON_CLIP), tr('Copy Google Maps link'))
@@ -95,12 +98,7 @@ class LinkGoogleMapsPlugin(QObject):
         self.search_action.triggered.connect(self._open_search_dialog)
         self.btn.setIcon(QIcon(ICON_CLIP))
         self.btn.setMenu(self.menu)
-        # Qt6: enum under QToolButton.ToolButtonPopupMode; Qt5: QToolButton.MenuButtonPopup
-        try:
-            popup_mode = QToolButton.ToolButtonPopupMode.MenuButtonPopup  # PyQt6 / QGIS 4
-        except AttributeError:
-            popup_mode = QToolButton.MenuButtonPopup  # PyQt5 / QGIS 3
-        self.btn.setPopupMode(popup_mode)
+        self.btn.setPopupMode(QToolButton.ToolButtonPopupMode.MenuButtonPopup)
         self.btn.clicked.connect(self.trigger_current_action)
         self.action_copy.triggered.connect(lambda: self.set_main_action('copy'))
         self.action_browser.triggered.connect(lambda: self.set_main_action('browser'))
@@ -118,8 +116,8 @@ class LinkGoogleMapsPlugin(QObject):
             try:
                 self.search_marker.setVisible(False)
                 iface.mapCanvas().scene().removeItem(self.search_marker)
-            except Exception:
-                pass
+            except (RuntimeError, AttributeError, TypeError) as exc:
+                _log_non_fatal(exc, 'unload marker')
             self.search_marker = None
         if self.map_tool:
             iface.mapCanvas().unsetMapTool(self.map_tool)
@@ -164,20 +162,13 @@ class LinkGoogleMapsPlugin(QObject):
     def _open_search_dialog(self):
         dlg = QDialog(iface.mainWindow())
         dlg.setWindowTitle(tr('Search address'))
-        try:
-            dlg.setMinimumWidth(520)
-        except Exception:
-            pass
+        dlg.setMinimumWidth(520)
         layout = QVBoxLayout(dlg)
         label = QLabel(tr('Enter address to locate'))
         # Editable combo as address box with history dropdown
         combo = QComboBox()
         combo.setEditable(True)
-        try:
-            insert_policy = QComboBox.InsertPolicy.NoInsert  # PyQt6 / QGIS 4
-        except AttributeError:
-            insert_policy = QComboBox.NoInsert  # PyQt5 / QGIS 3
-        combo.setInsertPolicy(insert_policy)
+        combo.setInsertPolicy(QComboBox.InsertPolicy.NoInsert)
         # Placeholder on the embedded line edit
         if combo.lineEdit() is not None:
             combo.lineEdit().setPlaceholderText(tr('Search address...'))
@@ -185,10 +176,7 @@ class LinkGoogleMapsPlugin(QObject):
         for item in self._load_search_history():
             combo.addItem(item)
         # Ensure input starts empty even if history exists
-        try:
-            combo.setCurrentIndex(-1)
-        except Exception:
-            pass
+        combo.setCurrentIndex(-1)
         if combo.lineEdit() is not None:
             combo.lineEdit().clear()
         zoom_label = QLabel(tr('Zoom level'))
@@ -197,11 +185,13 @@ class LinkGoogleMapsPlugin(QObject):
         zoom_combo.addItem(tr('City (1:10,000)'), 10000)
         zoom_combo.addItem(tr('Street (1:1,000)'), 1000)
         # Default selection and persisted preference (default = Street 1:1,000)
-        try:
-            settings = QSettings()
-            saved_scale = settings.value('plugins/LinkToGoogleMaps/zoomScale', 1000, type=int)
-        except Exception:
-            saved_scale = 1000
+        settings = QSettings()
+        saved_scale = settings.value('plugins/LinkToGoogleMaps/zoomScale', 1000, type=int)
+        if not isinstance(saved_scale, int):
+            try:
+                saved_scale = int(saved_scale)
+            except (TypeError, ValueError):
+                saved_scale = 1000
         # Select matching saved scale, otherwise default to Street
         selected_index = None
         for i in range(zoom_combo.count()):
@@ -213,24 +203,17 @@ class LinkGoogleMapsPlugin(QObject):
         layout.addWidget(combo)
         layout.addWidget(zoom_label)
         layout.addWidget(zoom_combo)
-        try:
-            buttons = QDialogButtonBox(
-                QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
-            )  # PyQt6 / QGIS 4
-        except AttributeError:
-            buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)  # PyQt5 / QGIS 3
+        buttons = QDialogButtonBox(
+            QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
+        )
         layout.addWidget(buttons)
         buttons.accepted.connect(dlg.accept)
         buttons.rejected.connect(dlg.reject)
         if combo.lineEdit() is not None:
             combo.lineEdit().returnPressed.connect(dlg.accept)
-        # PyQt6 uses exec(), PyQt5 uses exec_(); Qt6: QDialog.DialogCode.Accepted
+        # PyQt6 uses exec(); PyQt5 exposes exec_() (and often exec as alias)
         run_dialog = getattr(dlg, 'exec', None) or getattr(dlg, 'exec_')
-        try:
-            accepted_code = QDialog.DialogCode.Accepted  # PyQt6 / QGIS 4
-        except AttributeError:
-            accepted_code = QDialog.Accepted  # PyQt5 / QGIS 3
-        if run_dialog() == accepted_code:
+        if run_dialog() == QDialog.DialogCode.Accepted:
             current_text = combo.currentText() if combo.currentText() is not None else ''
             query = (current_text or '').strip()
             scale = zoom_combo.currentData() or 1000
@@ -238,8 +221,8 @@ class LinkGoogleMapsPlugin(QObject):
             try:
                 settings = QSettings()
                 settings.setValue(self._settings_zoom_key, int(scale))
-            except Exception:
-                pass
+            except (TypeError, ValueError) as exc:
+                _log_non_fatal(exc, 'save zoom scale')
             self._perform_search(query, scale)
 
     def _perform_search(self, query: str, scale: int):
@@ -258,8 +241,8 @@ class LinkGoogleMapsPlugin(QObject):
         # Update search history (dedup, most recent first, max 10)
         try:
             self._add_to_search_history(query)
-        except Exception:
-            pass
+        except (TypeError, ValueError, OSError) as exc:
+            _log_non_fatal(exc, 'search history')
         # Transform WGS84 -> project CRS
         crs_src = QgsCoordinateReferenceSystem.fromEpsgId(4326)
         crs_dest = QgsProject.instance().crs()
@@ -269,21 +252,21 @@ class LinkGoogleMapsPlugin(QObject):
         canvas.setCenter(pt)
         try:
             canvas.zoomScale(float(scale))
-        except Exception:
-            pass
+        except (TypeError, ValueError, AttributeError) as exc:
+            _log_non_fatal(exc, 'zoom scale')
         canvas.refresh()
         # Add/update a marker at the located point
         try:
             if self.search_marker is None:
                 self.search_marker = QgsVertexMarker(canvas)
-                self.search_marker.setIconType(QgsVertexMarker.ICON_CROSS)
+                self.search_marker.setIconType(QgsVertexMarker.IconType.ICON_CROSS)
                 self.search_marker.setColor(QColor(220, 30, 30))
                 self.search_marker.setPenWidth(3)
                 self.search_marker.setIconSize(14)
             self.search_marker.setCenter(pt)
             self.search_marker.setVisible(True)
-        except Exception:
-            pass
+        except (RuntimeError, AttributeError, TypeError) as exc:
+            _log_non_fatal(exc, 'search marker')
         iface.messageBar().pushSuccess(tr('Centered on result'), f'{lat:.6f}, {lng:.6f}')
 
     def _load_search_history(self):
@@ -294,16 +277,16 @@ class LinkGoogleMapsPlugin(QObject):
             if isinstance(items, list):
                 # Only keep strings
                 return [str(x) for x in items if isinstance(x, str)]
-        except Exception:
-            pass
+        except (json.JSONDecodeError, TypeError, ValueError):
+            return []
         return []
 
     def _save_search_history(self, items):
         try:
             settings = QSettings()
             settings.setValue(self._settings_history_key, json.dumps(items))
-        except Exception:
-            pass
+        except (TypeError, ValueError, OSError) as exc:
+            _log_non_fatal(exc, 'save search history')
 
     def _add_to_search_history(self, query: str):
         if not query:

@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Spanish translation (`es`): `LinkToGoogleMaps_es.ts` / `.qm` and update of translation build script.
 
+### Fixed
+- Use fully scoped Qt / QGIS enums for Qt6 / QGIS 4 plugin checker compliance (ToolButtonStyle, ToolButtonPopupMode, InsertPolicy, StandardButton, DialogCode, IconType).
+- Replace bare `except Exception: pass` with specific handlers / `QgsMessageLog` (Bandit B110).
+
 ## [1.0.3] - 2026-04-27
 ### Added
 - Catalan translation (`ca`): `LinkToGoogleMaps_ca.ts` / `.qm` and update of translation build script.
