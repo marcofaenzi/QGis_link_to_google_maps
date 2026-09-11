@@ -11,12 +11,14 @@ echo "Updating TS files from Python sources..."
 pylupdate5 "${PLUGIN_DIR}/link_google_maps_plugin.py" -ts \
   "${SCRIPT_DIR}/LinkToGoogleMaps_en.ts" \
   "${SCRIPT_DIR}/LinkToGoogleMaps_it.ts" \
-  "${SCRIPT_DIR}/LinkToGoogleMaps_ca.ts"
+  "${SCRIPT_DIR}/LinkToGoogleMaps_ca.ts" \
+  "${SCRIPT_DIR}/LinkToGoogleMaps_es.ts"
 
 echo "Compiling QM files..."
 mkdir -p "${SCRIPT_DIR}"
 lrelease "${SCRIPT_DIR}/LinkToGoogleMaps_it.ts" -qm "${SCRIPT_DIR}/LinkToGoogleMaps_it.qm"
 lrelease "${SCRIPT_DIR}/LinkToGoogleMaps_ca.ts" -qm "${SCRIPT_DIR}/LinkToGoogleMaps_ca.qm"
+lrelease "${SCRIPT_DIR}/LinkToGoogleMaps_es.ts" -qm "${SCRIPT_DIR}/LinkToGoogleMaps_es.qm"
 # English is source language; en.qm is optional. Uncomment if needed:
 # lrelease "${SCRIPT_DIR}/LinkToGoogleMaps_en.ts" -qm "${SCRIPT_DIR}/LinkToGoogleMaps_en.qm"
 
