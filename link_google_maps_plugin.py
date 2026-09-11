@@ -28,7 +28,7 @@ def _log_non_fatal(exc: Exception, context: str) -> None:
     QgsMessageLog.logMessage(
         f'LinkToGoogleMaps [{context}]: {exc}',
         'LinkToGoogleMaps',
-        Qgis.Info,
+        Qgis.MessageLevel.Info,
     )
 
 class SingleClickMapTool(QgsMapTool):
