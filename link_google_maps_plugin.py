@@ -18,6 +18,7 @@ PLUGIN_PATH = os.path.dirname(os.path.abspath(__file__))
 ICON_CLIP = os.path.join(PLUGIN_PATH, 'icon_clipboard.png')
 ICON_BROWSER = os.path.join(PLUGIN_PATH, 'icon_browser.png')
 ICON_STREET = os.path.join(PLUGIN_PATH, 'icon_streetview.png')
+ICON_EARTH = os.path.join(PLUGIN_PATH, 'icon_googleearth.png')
 ICON_SEARCH = os.path.join(PLUGIN_PATH, 'map_search.png')
 
 def tr(msg):
@@ -49,8 +50,9 @@ class LinkGoogleMapsPlugin(QObject):
         self.action_copy = None
         self.action_browser = None
         self.action_street = None
+        self.action_earth = None
         self.map_tool = None
-        self.current_action = 'copy'  # 'copy', 'browser', 'streetview'
+        self.current_action = 'copy'  # 'copy', 'browser', 'streetview', 'earth'
         self.translator = None
         self._load_translator()
         # Search action
@@ -93,6 +95,7 @@ class LinkGoogleMapsPlugin(QObject):
         self.action_copy = self.menu.addAction(QIcon(ICON_CLIP), tr('Copy Google Maps link'))
         self.action_browser = self.menu.addAction(QIcon(ICON_BROWSER), tr('Open on Google Maps in browser'))
         self.action_street = self.menu.addAction(QIcon(ICON_STREET), tr('Open Street View in browser'))
+        self.action_earth = self.menu.addAction(QIcon(ICON_EARTH), tr('Open Google Earth in browser'))
         self.menu.addSeparator()
         self.search_action = self.menu.addAction(QIcon(ICON_SEARCH), tr('Search address'))
         self.search_action.triggered.connect(self._open_search_dialog)
@@ -103,6 +106,7 @@ class LinkGoogleMapsPlugin(QObject):
         self.action_copy.triggered.connect(lambda: self.set_main_action('copy'))
         self.action_browser.triggered.connect(lambda: self.set_main_action('browser'))
         self.action_street.triggered.connect(lambda: self.set_main_action('streetview'))
+        self.action_earth.triggered.connect(lambda: self.set_main_action('earth'))
         self.btn.setToolTip(tr('Copy Google Maps link'))
         iface.addToolBarWidget(self.btn)
 
@@ -133,6 +137,9 @@ class LinkGoogleMapsPlugin(QObject):
         elif mode == 'streetview':
             self.btn.setIcon(QIcon(ICON_STREET))
             self.btn.setToolTip(tr('Open Street View in browser'))
+        elif mode == 'earth':
+            self.btn.setIcon(QIcon(ICON_EARTH))
+            self.btn.setToolTip(tr('Open Google Earth in browser'))
         self.trigger_current_action()
 
     def trigger_current_action(self):
@@ -158,6 +165,10 @@ class LinkGoogleMapsPlugin(QObject):
             street_link = f'https://www.google.com/maps/@?api=1&map_action=pano&viewpoint={lat},{lng}'
             QDesktopServices.openUrl(QUrl(street_link))
             iface.messageBar().pushSuccess(tr('Opened Street View in browser'), street_link)
+        elif self.current_action == 'earth':
+            earth_link = f'https://earth.google.com/web/search/{lat:.8f},{lng:.8f}'
+            QDesktopServices.openUrl(QUrl(earth_link))
+            iface.messageBar().pushSuccess(tr('Opened Google Earth in browser'), earth_link)
 
     def _open_search_dialog(self):
         dlg = QDialog(iface.mainWindow())
@@ -310,7 +321,7 @@ class LinkGoogleMapsPlugin(QObject):
         if parsed.scheme != 'https' or parsed.netloc != 'nominatim.openstreetmap.org':
             raise ValueError('Only HTTPS Nominatim endpoint is allowed')
         req = Request(url, headers={
-            'User-Agent': f'LinkToGoogleMaps QGIS Plugin/1.0.4 ({QApplication.instance().applicationName()})'
+            'User-Agent': f'LinkToGoogleMaps QGIS Plugin/1.0.5 ({QApplication.instance().applicationName()})'
         })
         with urlopen(req, timeout=10) as resp:  # nosec B310 - validated https scheme and fixed trusted host above
             payload = resp.read()

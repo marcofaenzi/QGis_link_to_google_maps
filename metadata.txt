@@ -2,22 +2,22 @@
 name=LinkToGoogleMaps
 qgisMinimumVersion=3.0
 qgisMaximumVersion=4.99
-description=Generate a Google Maps or Street View link from any spot on your QGIS map—copy or open the location instantly with one click, always using WGS84 coordinates.
+description=Generate a Google Maps, Street View, or Google Earth link from any spot on your QGIS map—copy or open the location instantly with one click, always using WGS84 coordinates.
 author=Marco Faenzi
 email=marco.faenzi@gmail.com
-version=1.0.4
+version=1.0.5
 icon=icon.png
 category=Web
-tags=google maps,street view,clipboard,url,map link,external tools,sharing
-changelog=Spanish translation (es); Qt6 scoped enums for plugin checker (v1.0.4). Catalan translation (ca) (v1.0.3). Security hardening for Nominatim urlopen (v1.0.2). Qt6 / QGIS 4 compatible (v1.0.1).
+tags=google maps,google earth,street view,clipboard,url,map link,external tools,sharing
+changelog=Google Earth Web action (v1.0.5). Spanish translation and Qt6 scoped enums (v1.0.4). Catalan translation (ca) (v1.0.3). Security hardening for Nominatim urlopen (v1.0.2).
 experimental=False
 deprecated=False
 license=GPL-3.0
-about=Create shareable Google Maps and Street View links directly from QGIS.
+about=Create shareable Google Maps, Street View, and Google Earth links directly from QGIS.
  It converts any clicked map point to WGS84 and builds the URL for you.
  Key features:
  - One click to copy the link or open it in your browser
- - Choose Google Maps or Street View as the default action
+ - Choose Google Maps, Street View, or Google Earth as the default action
  - Automatic reprojection to WGS84 from any layer CRS
  - Configurable zoom level for Maps and Street View
  - Toolbar button remembers your last choice

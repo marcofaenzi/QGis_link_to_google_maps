@@ -2,13 +2,14 @@
 
 ## Description
 
-**LinkToGoogleMaps** is a simple yet powerful QGIS plugin that lets you instantly generate Google Maps and Street View links with just a click on your map. Copy the link, open it in your default browser, or jump straight into Street View — always using WGS84 coordinates, compatible with any project CRS.
+**LinkToGoogleMaps** is a simple yet powerful QGIS plugin that lets you instantly generate Google Maps, Street View, and Google Earth links with just a click on your map. Copy the link, open it in your default browser, jump into Street View, or open Google Earth Web — always using WGS84 coordinates, compatible with any project CRS.
 
 ## Features
 
 - Copy a link to Google Maps for the clicked location on the map.
 - Open Google Maps for the coordinate in your browser.
 - Open the nearest Street View point for the clicked location.
+- Open Google Earth Web for the clicked location.
 - Automatically convert coordinates to WGS84 (EPSG:4326) from any CRS.
 - User-friendly toolbar button with a drop-down menu to choose the default action.
 - **Address search:** from the dropdown menu, search by address (Nominatim) to center the map on a place.

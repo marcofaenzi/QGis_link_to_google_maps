@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.5] - 2026-09-11
+### Added
+- Google Earth Web action: open the clicked location in Google Earth in the browser (thanks to [@Txito-alpha](https://github.com/Txito-alpha)).
+
 ## [1.0.4] - 2026-09-11
 ### Added
 - Spanish translation (`es`): `LinkToGoogleMaps_es.ts` / `.qm` and update of translation build script.

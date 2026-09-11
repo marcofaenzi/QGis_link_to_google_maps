@@ -1,0 +1,6 @@
+__pycache__/
+*.py[cod]
+*$py.class
+*.qm~
+.DS_Store
+.vscode/
